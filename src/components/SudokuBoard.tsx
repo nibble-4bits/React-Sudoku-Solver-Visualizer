@@ -1,6 +1,13 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { generateSudokuBoard, generateSudokuCellRefs, isValidValue } from '../util/sudoku';
+import {
+  generateSudokuBoard,
+  generateSudokuCellRefs,
+  isCellInBox,
+  isCellInCol,
+  isCellInRow,
+  isValidValue,
+} from '../util/sudoku';
 import { clamp } from '../util/util';
 import SudokuCell from './SudokuCell';
 
@@ -77,7 +84,11 @@ function SudokuBoard(): JSX.Element {
                 handleChange(e, i, j);
               }}
               onFocus={setFocusedCell}
-              isHighlighted={i === focusedCell[0] || j === focusedCell[1]}
+              isHighlighted={
+                isCellInRow(focusedCell[0], i) ||
+                isCellInCol(focusedCell[1], j) ||
+                isCellInBox(focusedCell[0], focusedCell[1], i, j)
+              }
               onKeyDown={handleKeyDown}
             />
           );
