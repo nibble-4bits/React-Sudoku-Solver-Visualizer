@@ -15,7 +15,7 @@ const Input = styled.input<InputProps>`
   border-top: ${(props) => props.row > 0 && props.row % 3 === 0 && '3px solid #000'};
   background-color: ${(props) => props.highlight && '#ddd'};
   outline: none;
-  font-size: 250%;
+  font-size: 4rem;
   text-align: center;
   padding: 0;
 
