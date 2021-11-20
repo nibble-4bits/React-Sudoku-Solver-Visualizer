@@ -17,7 +17,8 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-rows: repeat(9, 1fr);
   grid-template-columns: repeat(9, 1fr);
-  border: 6px solid #000;
+  border: 5px solid #000;
+  overflow: hidden;
 `;
 
 function SudokuBoard(): JSX.Element {
@@ -29,7 +30,7 @@ function SudokuBoard(): JSX.Element {
   const [focusedRow, focusedCol] = focusedCell;
 
   // An array of array of refs. Each ref holds a reference to the actual input element that represents a cell
-  // This is used to focus the current selected cell when using the arrow keys in the `handleKeyDown` event handler
+  // This is used to focus the current focused cell when using the arrow keys in the `handleKeyDown` event handler
   const cellRefs = useRef<React.RefObject<HTMLInputElement>[][]>(generateSudokuCellRefs());
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, row: number, col: number) => {
