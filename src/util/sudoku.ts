@@ -15,6 +15,8 @@ export function generateSudokuCellRefs<T>(): React.RefObject<T>[][] {
  * @returns boolean
  */
 export function isCellInRow(referenceRow: number, testRow: number): boolean {
+  if (referenceRow < 0) return false;
+
   return referenceRow === testRow;
 }
 
@@ -25,6 +27,8 @@ export function isCellInRow(referenceRow: number, testRow: number): boolean {
  * @returns boolean
  */
 export function isCellInCol(referenceCol: number, testCol: number): boolean {
+  if (referenceCol < 0) return false;
+
   return referenceCol === testCol;
 }
 
@@ -42,6 +46,8 @@ export function isCellInBox(
   testRow: number,
   testCol: number
 ): boolean {
+  if (referenceRow < 0 || referenceCol < 0) return false;
+
   const rowStart = referenceRow - (referenceRow % 3);
   const rowEnd = rowStart + 3;
   const colStart = referenceCol - (referenceCol % 3);
