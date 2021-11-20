@@ -69,6 +69,10 @@ function SudokuCell(props: SudokuCellProps, ref: React.ForwardedRef<HTMLInputEle
     onFocus([row, col]);
   };
 
+  const handleBlur = () => {
+    onFocus([-1, -1]);
+  };
+
   return (
     <Input
       ref={ref}
@@ -78,6 +82,7 @@ function SudokuCell(props: SudokuCellProps, ref: React.ForwardedRef<HTMLInputEle
       onKeyDown={handleKeyUp}
       onChange={onChange}
       onFocus={handleFocus}
+      onBlur={handleBlur}
       value={value || ''}
       row={row}
       col={col}
