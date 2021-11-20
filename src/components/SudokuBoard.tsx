@@ -26,6 +26,7 @@ function SudokuBoard(): JSX.Element {
 
   // This state variable holds a pair of [row, col] coordinates that represent the current focused cell
   const [focusedCell, setFocusedCell] = useState([-1, -1]);
+  const [focusedRow, focusedCol] = focusedCell;
 
   // An array of array of refs. Each ref holds a reference to the actual input element that represents a cell
   // This is used to focus the current selected cell when using the arrow keys in the `handleKeyDown` event handler
@@ -45,24 +46,23 @@ function SudokuBoard(): JSX.Element {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { key } = e;
-    const [row, col] = focusedCell;
-    const aboveRow = clamp(row - 1, 0, sudokuBoard.length - 1);
-    const belowRow = clamp(row + 1, 0, sudokuBoard.length - 1);
-    const prevCol = clamp(col - 1, 0, sudokuBoard.length - 1);
-    const nextCol = clamp(col + 1, 0, sudokuBoard.length - 1);
+    const aboveRow = clamp(focusedRow - 1, 0, sudokuBoard.length - 1);
+    const belowRow = clamp(focusedRow + 1, 0, sudokuBoard.length - 1);
+    const prevCol = clamp(focusedCol - 1, 0, sudokuBoard.length - 1);
+    const nextCol = clamp(focusedCol + 1, 0, sudokuBoard.length - 1);
 
     switch (key) {
       case 'ArrowUp':
-        cellRefs.current[aboveRow][col].current?.focus();
+        cellRefs.current[aboveRow][focusedCol].current?.focus();
         break;
       case 'ArrowDown':
-        cellRefs.current[belowRow][col].current?.focus();
+        cellRefs.current[belowRow][focusedCol].current?.focus();
         break;
       case 'ArrowLeft':
-        cellRefs.current[row][prevCol].current?.focus();
+        cellRefs.current[focusedRow][prevCol].current?.focus();
         break;
       case 'ArrowRight':
-        cellRefs.current[row][nextCol].current?.focus();
+        cellRefs.current[focusedRow][nextCol].current?.focus();
         break;
       default:
         break;
@@ -85,9 +85,9 @@ function SudokuBoard(): JSX.Element {
               }}
               onFocus={setFocusedCell}
               isHighlighted={
-                isCellInRow(focusedCell[0], i) ||
-                isCellInCol(focusedCell[1], j) ||
-                isCellInBox(focusedCell[0], focusedCell[1], i, j)
+                isCellInRow(focusedRow, i) ||
+                isCellInCol(focusedCol, j) ||
+                isCellInBox(focusedRow, focusedCol, i, j)
               }
               onKeyDown={handleKeyDown}
             />
