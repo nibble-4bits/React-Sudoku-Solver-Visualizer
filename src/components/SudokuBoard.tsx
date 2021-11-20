@@ -22,7 +22,7 @@ const Wrapper = styled.div`
 
 function SudokuBoard(): JSX.Element {
   // This state variable holds a representation of the sudoku board as an array of 9x9 cells
-  const [sudokuValues, setSudokuValues] = useState(generateSudokuBoard());
+  const [sudokuBoard, setSudokuBoard] = useState(generateSudokuBoard());
 
   // This state variable holds a pair of [row, col] coordinates that represent the current focused cell
   const [focusedCell, setFocusedCell] = useState([-1, -1]);
@@ -34,22 +34,22 @@ function SudokuBoard(): JSX.Element {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, row: number, col: number) => {
     const inputVal = parseInt(e.target.value);
 
-    if (isValidValue(inputVal, row, col, sudokuValues)) {
-      const valuesCopy = sudokuValues.slice();
+    if (isValidValue(inputVal, row, col, sudokuBoard)) {
+      const valuesCopy = sudokuBoard.slice();
 
       valuesCopy[row][col] = inputVal;
 
-      setSudokuValues(valuesCopy);
+      setSudokuBoard(valuesCopy);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { key } = e;
     const [row, col] = focusedCell;
-    const aboveRow = clamp(row - 1, 0, sudokuValues.length - 1);
-    const belowRow = clamp(row + 1, 0, sudokuValues.length - 1);
-    const prevCol = clamp(col - 1, 0, sudokuValues.length - 1);
-    const nextCol = clamp(col + 1, 0, sudokuValues.length - 1);
+    const aboveRow = clamp(row - 1, 0, sudokuBoard.length - 1);
+    const belowRow = clamp(row + 1, 0, sudokuBoard.length - 1);
+    const prevCol = clamp(col - 1, 0, sudokuBoard.length - 1);
+    const nextCol = clamp(col + 1, 0, sudokuBoard.length - 1);
 
     switch (key) {
       case 'ArrowUp':
@@ -71,8 +71,8 @@ function SudokuBoard(): JSX.Element {
 
   return (
     <Wrapper>
-      {sudokuValues.map((row, i) => {
-        return row.map((cellValue, j) => {
+      {sudokuBoard.map((boardRow, i) => {
+        return boardRow.map((cellValue, j) => {
           return (
             <SudokuCell
               ref={cellRefs.current[i][j]}
