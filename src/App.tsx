@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import SudokuBoard from './components/SudokuBoard';
+import SudokuSolver from './components/SudokuSolver';
 
 const AppWrapper = styled.div`
   height: 100vh;
@@ -12,7 +12,7 @@ const AppWrapper = styled.div`
 function App(): JSX.Element {
   return (
     <AppWrapper>
-      <SudokuBoard />
+      <SudokuSolver />
     </AppWrapper>
   );
 }
