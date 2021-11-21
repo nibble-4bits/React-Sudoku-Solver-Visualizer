@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
-  generateSudokuBoard,
   generateSudokuCellRefs,
   isCellInBox,
   isCellInCol,
@@ -21,9 +20,14 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-function SudokuBoard(): JSX.Element {
-  // This state variable holds a representation of the sudoku board as an array of 9x9 cells
-  const [sudokuBoard, setSudokuBoard] = useState(generateSudokuBoard());
+interface SudokuBoardProps {
+  board: number[][];
+  setBoardCell: (value: number, row: number, col: number) => void;
+  disableUserInput?: boolean;
+}
+
+function SudokuBoard(props: SudokuBoardProps): JSX.Element {
+  const { board, setBoardCell, disableUserInput } = props;
 
   // This state variable holds a pair of [row, col] coordinates that represent the current focused cell
   const [focusedCell, setFocusedCell] = useState([-1, -1]);
@@ -36,28 +40,17 @@ function SudokuBoard(): JSX.Element {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, row: number, col: number) => {
     const inputVal = parseInt(e.target.value);
 
-  const setSudokuCell = (value: number, row: number, col: number) => {
-    const valuesCopy = sudokuBoard.slice();
-
-    valuesCopy[row][col] = value;
-
-    setSudokuBoard(valuesCopy);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, row: number, col: number) => {
-    const inputVal = parseInt(e.target.value);
-
-    if (isValidValue(inputVal, row, col, sudokuBoard)) {
-      setSudokuCell(inputVal, row, col);
+    if (isValidValue(inputVal, row, col, board)) {
+      setBoardCell(inputVal, row, col);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { key } = e;
-    const aboveRow = clamp(focusedRow - 1, 0, sudokuBoard.length - 1);
-    const belowRow = clamp(focusedRow + 1, 0, sudokuBoard.length - 1);
-    const prevCol = clamp(focusedCol - 1, 0, sudokuBoard.length - 1);
-    const nextCol = clamp(focusedCol + 1, 0, sudokuBoard.length - 1);
+    const aboveRow = clamp(focusedRow - 1, 0, board.length - 1);
+    const belowRow = clamp(focusedRow + 1, 0, board.length - 1);
+    const prevCol = clamp(focusedCol - 1, 0, board.length - 1);
+    const nextCol = clamp(focusedCol + 1, 0, board.length - 1);
 
     switch (key) {
       case 'ArrowUp':
@@ -79,7 +72,7 @@ function SudokuBoard(): JSX.Element {
 
   return (
     <Wrapper>
-      {sudokuBoard.map((boardRow, i) => {
+      {board.map((boardRow, i) => {
         return boardRow.map((cellValue, j) => {
           return (
             <SudokuCell
@@ -97,6 +90,7 @@ function SudokuBoard(): JSX.Element {
                 isCellInCol(focusedCol, j) ||
                 isCellInBox(focusedRow, focusedCol, i, j)
               }
+              disabled={disableUserInput}
               onKeyDown={handleKeyDown}
             />
           );
