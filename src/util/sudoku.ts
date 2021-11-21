@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 
-export function generateSudokuBoard(): number[][] {
+export function generateEmptySudokuBoard(): number[][] {
   return Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
 }
 

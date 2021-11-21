@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { generateSudokuBoard, solveSudokuSteps } from '../util/sudoku';
+import { generateEmptySudokuBoard, solveSudokuSteps } from '../util/sudoku';
 import { deepCopyArray, sleep } from '../util/util';
 import SudokuBoard from './SudokuBoard';
 
@@ -50,7 +50,7 @@ const Button = styled.button`
 
 function SudokuSolver(): JSX.Element {
   // This state variable holds a representation of the sudoku board as an array of 9x9 cells
-  const [sudokuBoard, setSudokuBoard] = useState(generateSudokuBoard());
+  const [sudokuBoard, setSudokuBoard] = useState(generateEmptySudokuBoard());
   const [solvingSteps, setSolvingSteps] = useState<number[][][]>([]);
 
   const [solvingSpeed, setSolvingSpeed] = useState('1');
@@ -63,7 +63,7 @@ function SudokuSolver(): JSX.Element {
 
   useEffect(() => {
     if (sudokuState.isCleared) {
-      setSudokuBoard(generateSudokuBoard());
+      setSudokuBoard(generateEmptySudokuBoard());
       setSudokuState((prev) => ({ ...prev, isCleared: false }));
       currentStepIdx.current = 0;
     }
