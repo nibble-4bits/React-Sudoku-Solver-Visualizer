@@ -5,3 +5,12 @@ export function clamp(value: number, min: number, max: number): number {
 
   return value;
 }
+
+export function deepCopyArray(array: unknown[]): unknown {
+  return array.map((el) => {
+    if (Array.isArray(el)) {
+      return deepCopyArray(el);
+    }
+    return el;
+  });
+}
