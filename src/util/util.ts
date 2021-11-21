@@ -14,3 +14,11 @@ export function deepCopyArray(array: unknown[]): unknown {
     return el;
   });
 }
+
+export async function sleep(ms: number): Promise<void> {
+  if (ms === 0) return;
+
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
