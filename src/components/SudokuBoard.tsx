@@ -36,12 +36,19 @@ function SudokuBoard(): JSX.Element {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, row: number, col: number) => {
     const inputVal = parseInt(e.target.value);
 
+  const setSudokuCell = (value: number, row: number, col: number) => {
+    const valuesCopy = sudokuBoard.slice();
+
+    valuesCopy[row][col] = value;
+
+    setSudokuBoard(valuesCopy);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, row: number, col: number) => {
+    const inputVal = parseInt(e.target.value);
+
     if (isValidValue(inputVal, row, col, sudokuBoard)) {
-      const valuesCopy = sudokuBoard.slice();
-
-      valuesCopy[row][col] = inputVal;
-
-      setSudokuBoard(valuesCopy);
+      setSudokuCell(inputVal, row, col);
     }
   };
 
