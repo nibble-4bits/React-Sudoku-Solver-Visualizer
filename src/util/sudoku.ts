@@ -133,3 +133,35 @@ export function findNextEmptyCell(sudoku: number[][]): [number, number] | null {
 
   return null;
 }
+
+export function solveSudoku(sudoku: number[][], steps: number[][][]): boolean {
+  steps.push(sudoku.map((row) => row.slice()));
+  const emptyCell = findNextEmptyCell(sudoku);
+  if (!emptyCell) {
+    return true;
+  }
+
+  const [row, col] = emptyCell;
+  for (let possibleNum = 1; possibleNum <= 9; possibleNum++) {
+    if (isValidValue(possibleNum, row, col, sudoku)) {
+      sudoku[row][col] = possibleNum;
+
+      if (solveSudoku(sudoku, steps)) {
+        return true;
+      }
+
+      sudoku[row][col] = 0;
+    }
+  }
+
+  return false;
+}
+
+export function solveSudokuSteps(sudoku: number[][]): number[][][] | null {
+  const steps: number[][][] = [];
+
+  const solved = solveSudoku(sudoku, steps);
+
+  if (solved) return steps;
+  return null;
+}
