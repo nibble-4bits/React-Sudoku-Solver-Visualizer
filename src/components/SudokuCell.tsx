@@ -19,6 +19,11 @@ const Input = styled.input<InputProps>`
   text-align: center;
   padding: 0;
 
+  &:disabled {
+    background-color: #fff;
+    color: #000;
+  }
+
   // Hide increment/decrement arrows
   -moz-appearance: textfield;
   &::-webkit-outer-spin-button,
@@ -35,11 +40,12 @@ interface SudokuCellProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: React.Dispatch<React.SetStateAction<number[]>>;
   isHighlighted: boolean;
+  disabled?: boolean;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 function SudokuCell(props: SudokuCellProps, ref: React.ForwardedRef<HTMLInputElement>) {
-  const { row, col, value, onChange, onFocus, isHighlighted, onKeyDown } = props;
+  const { row, col, value, onChange, onFocus, isHighlighted, disabled, onKeyDown } = props;
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // First, call props onKeyDown event handler, if defined
@@ -86,6 +92,7 @@ function SudokuCell(props: SudokuCellProps, ref: React.ForwardedRef<HTMLInputEle
       value={value || ''}
       row={row}
       col={col}
+      disabled={disabled}
       highlight={isHighlighted}
     />
   );
