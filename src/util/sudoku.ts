@@ -1,7 +1,32 @@
 import { createRef } from 'react';
+import { deepCopyArray, random, shuffle } from './util';
 
 export function generateEmptySudokuBoard(): number[][] {
   return Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
+}
+
+export function generateSolvableSudokuBoard(): number[][] {
+  const initialSudoku = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
+  const cellPositions = [];
+
+  solveSudoku(initialSudoku, false);
+
+  for (let i = 0; i < initialSudoku.length; i++) {
+    for (let j = 0; j < initialSudoku[i].length; j++) {
+      cellPositions.push([i, j]);
+    }
+  }
+
+  // Randomly remove between 48 and 62 cells from the generated sudoku
+  const emptyCells = random(48, 62);
+  const shuffledCellPositions = shuffle(cellPositions).slice(0, emptyCells);
+
+  for (let i = 0; i < shuffledCellPositions.length; i++) {
+    const [row, col] = shuffledCellPositions[i];
+    initialSudoku[row][col] = 0;
+  }
+
+  return initialSudoku;
 }
 
 export function generateSudokuCellRefs<T>(): React.RefObject<T>[][] {
@@ -134,19 +159,29 @@ export function findNextEmptyCell(sudoku: number[][]): [number, number] | null {
   return null;
 }
 
-export function solveSudoku(sudoku: number[][], steps: number[][][]): boolean {
-  steps.push(sudoku.map((row) => row.slice()));
+export function solveSudoku(
+  sudoku: number[][],
+  fillCellsSequentially = true,
+  steps?: number[][][]
+): boolean {
+  if (steps) steps.push(deepCopyArray(sudoku) as number[][]);
+
   const emptyCell = findNextEmptyCell(sudoku);
   if (!emptyCell) {
     return true;
   }
 
   const [row, col] = emptyCell;
-  for (let possibleNum = 1; possibleNum <= 9; possibleNum++) {
+  let possibleNums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  if (!fillCellsSequentially) {
+    possibleNums = shuffle(possibleNums);
+  }
+
+  for (const possibleNum of possibleNums) {
     if (isValidValue(possibleNum, row, col, sudoku)) {
       sudoku[row][col] = possibleNum;
 
-      if (solveSudoku(sudoku, steps)) {
+      if (solveSudoku(sudoku, fillCellsSequentially, steps)) {
         return true;
       }
 
@@ -160,7 +195,7 @@ export function solveSudoku(sudoku: number[][], steps: number[][][]): boolean {
 export function solveSudokuSteps(sudoku: number[][]): number[][][] | null {
   const steps: number[][][] = [];
 
-  const solved = solveSudoku(sudoku, steps);
+  const solved = solveSudoku(sudoku, true, steps);
 
   if (solved) return steps;
   return null;
