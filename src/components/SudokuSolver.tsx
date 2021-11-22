@@ -65,7 +65,6 @@ function SudokuSolver(): JSX.Element {
   const [solvingSpeed, setSolvingSpeed] = useState('1');
   const [sudokuState, setSudokuState] = useState({
     isSolving: false,
-    isSolved: false,
     isCleared: false,
   });
   const currentStepIdx = useRef(0);
@@ -105,8 +104,7 @@ function SudokuSolver(): JSX.Element {
     return () => {
       skipPreviousEffect = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solvingSpeed, sudokuState.isSolving]);
+  }, [solvingSpeed, solvingSteps, sudokuState.isSolving]);
 
   const setSudokuCell = (value: number, row: number, col: number) => {
     const valuesCopy = sudokuBoard.slice();
@@ -121,7 +119,7 @@ function SudokuSolver(): JSX.Element {
   };
 
   const handleClearClick = () => {
-    setSudokuState({ isSolving: false, isSolved: false, isCleared: true });
+    setSudokuState({ isSolving: false, isCleared: true });
   };
 
   const handleSolveClick = () => {
@@ -130,11 +128,12 @@ function SudokuSolver(): JSX.Element {
     if (steps) {
       setSolvingSteps(steps);
     }
+    currentStepIdx.current = 0;
   };
 
   const handleGenerateClick = () => {
     setSudokuBoard(generateSolvableSudokuBoard());
-    setSudokuState((prev) => ({ ...prev, isSolving: false, isSolved: false }));
+    setSudokuState((prev) => ({ ...prev, isSolving: false }));
     currentStepIdx.current = 0;
   };
 
@@ -143,7 +142,7 @@ function SudokuSolver(): JSX.Element {
       <SudokuBoard
         board={sudokuBoard}
         setBoardCell={setSudokuCell}
-        disableUserInput={sudokuState.isSolving || sudokuState.isSolved}
+        disableUserInput={sudokuState.isSolving}
       />
       <SolvingSpeedWrapper>
         <SolvingSpeedLabel htmlFor="solving-speed-input">Solving speed (ms):</SolvingSpeedLabel>
@@ -160,7 +159,7 @@ function SudokuSolver(): JSX.Element {
         <Button type="button" onClick={handleClearClick}>
           Clear
         </Button>
-        <Button type="button" onClick={handleSolveClick}>
+        <Button type="button" onClick={handleSolveClick} disabled={sudokuState.isSolving}>
           Solve
         </Button>
         <Button type="button" onClick={handleGenerateClick}>
