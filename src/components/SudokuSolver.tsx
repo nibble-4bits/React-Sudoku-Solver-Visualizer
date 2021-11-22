@@ -95,6 +95,10 @@ function SudokuSolver(): JSX.Element {
           }
         }
       }
+
+      if (currentStepIdx.current === solvingSteps.length - 1) {
+        setSudokuState((prev) => ({ ...prev, isSolving: false }));
+      }
     }
 
     if (sudokuState.isSolving) {
