@@ -50,6 +50,11 @@ const Button = styled.button`
     background-color: #256cca;
     cursor: pointer;
   }
+
+  &:disabled {
+    background-color: #478fec;
+    cursor: not-allowed;
+  }
 `;
 
 function SudokuSolver(): JSX.Element {
