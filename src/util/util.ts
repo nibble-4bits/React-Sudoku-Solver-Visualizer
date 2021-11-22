@@ -22,3 +22,11 @@ export async function sleep(ms: number): Promise<void> {
     setTimeout(resolve, ms);
   });
 }
+
+export function random(min: number, max: number): number {
+  if (min >= max) {
+    throw new Error('min param MUST be less than max');
+  }
+
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
