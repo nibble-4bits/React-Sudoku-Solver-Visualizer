@@ -47,7 +47,7 @@ interface SudokuCellProps {
 function SudokuCell(props: SudokuCellProps, ref: React.ForwardedRef<HTMLInputElement>) {
   const { row, col, value, onChange, onFocus, isHighlighted, disabled, onKeyDown } = props;
 
-  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // First, call props onKeyDown event handler, if defined
     if (onKeyDown) {
       onKeyDown(e);
@@ -85,7 +85,7 @@ function SudokuCell(props: SudokuCellProps, ref: React.ForwardedRef<HTMLInputEle
       type="number"
       min="1"
       max="9"
-      onKeyDown={handleKeyUp}
+      onKeyDown={handleKeyDown}
       onChange={onChange}
       onFocus={handleFocus}
       onBlur={handleBlur}
