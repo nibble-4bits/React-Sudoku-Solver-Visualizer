@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { generateEmptySudokuBoard, solveSudokuSteps } from '../util/sudoku';
+import {
+  generateEmptySudokuBoard,
+  generateSolvableSudokuBoard,
+  solveSudokuSteps,
+} from '../util/sudoku';
 import { deepCopyArray, sleep } from '../util/util';
 import SudokuBoard from './SudokuBoard';
 
@@ -124,7 +128,9 @@ function SudokuSolver(): JSX.Element {
   };
 
   const handleGenerateClick = () => {
-    console.log('pass');
+    setSudokuBoard(generateSolvableSudokuBoard());
+    setSudokuState((prev) => ({ ...prev, isSolving: false, isSolved: false }));
+    currentStepIdx.current = 0;
   };
 
   return (
