@@ -107,7 +107,7 @@ function SudokuSolver(): JSX.Element {
   }, [solvingSpeed, solvingSteps, sudokuState.isSolving]);
 
   const setSudokuCell = (value: number, row: number, col: number) => {
-    const valuesCopy = sudokuBoard.slice();
+    const valuesCopy = deepCopyArray(sudokuBoard) as number[][];
 
     valuesCopy[row][col] = value;
 
