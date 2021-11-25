@@ -63,19 +63,8 @@ function SudokuSolver(): JSX.Element {
   const [solvingSteps, setSolvingSteps] = useState<number[][][]>([]);
 
   const [solvingSpeed, setSolvingSpeed] = useState('1');
-  const [sudokuState, setSudokuState] = useState({
-    isSolving: false,
-    isCleared: false,
-  });
+  const [isSolvingSudoku, setIsSolvingSudoku] = useState(false);
   const currentStepIdx = useRef(0);
-
-  useEffect(() => {
-    if (sudokuState.isCleared) {
-      setSudokuBoard(generateEmptySudokuBoard());
-      setSudokuState((prev) => ({ ...prev, isCleared: false }));
-      currentStepIdx.current = 0;
-    }
-  }, [sudokuState.isCleared]);
 
   useEffect(() => {
     const numericSolvingSpeed = parseInt(solvingSpeed);
@@ -97,14 +86,14 @@ function SudokuSolver(): JSX.Element {
       }
     }
 
-    if (sudokuState.isSolving) {
+    if (isSolvingSudoku) {
       showSteps();
     }
 
     return () => {
       skipPreviousEffect = true;
     };
-  }, [solvingSpeed, solvingSteps, sudokuState.isSolving]);
+  }, [solvingSpeed, solvingSteps, isSolvingSudoku]);
 
   const setSudokuCell = (value: number, row: number, col: number) => {
     const valuesCopy = deepCopyArray(sudokuBoard) as number[][];
@@ -119,11 +108,13 @@ function SudokuSolver(): JSX.Element {
   };
 
   const handleClearClick = () => {
-    setSudokuState({ isSolving: false, isCleared: true });
+    setIsSolvingSudoku(false);
+    setSudokuBoard(generateEmptySudokuBoard());
+    currentStepIdx.current = 0;
   };
 
   const handleSolveClick = () => {
-    setSudokuState((prev) => ({ ...prev, isSolving: true }));
+    setIsSolvingSudoku(true);
     const steps = solveSudokuSteps(deepCopyArray(sudokuBoard) as number[][]);
     if (steps) {
       setSolvingSteps(steps);
@@ -132,8 +123,8 @@ function SudokuSolver(): JSX.Element {
   };
 
   const handleGenerateClick = () => {
+    setIsSolvingSudoku(false);
     setSudokuBoard(generateSolvableSudokuBoard());
-    setSudokuState((prev) => ({ ...prev, isSolving: false }));
     currentStepIdx.current = 0;
   };
 
@@ -142,7 +133,7 @@ function SudokuSolver(): JSX.Element {
       <SudokuBoard
         board={sudokuBoard}
         setBoardCell={setSudokuCell}
-        disableUserInput={sudokuState.isSolving}
+        disableUserInput={isSolvingSudoku}
       />
       <SolvingSpeedWrapper>
         <SolvingSpeedLabel htmlFor="solving-speed-input">Solving speed (ms):</SolvingSpeedLabel>
@@ -159,7 +150,7 @@ function SudokuSolver(): JSX.Element {
         <Button type="button" onClick={handleClearClick}>
           Clear
         </Button>
-        <Button type="button" onClick={handleSolveClick} disabled={sudokuState.isSolving}>
+        <Button type="button" onClick={handleSolveClick} disabled={isSolvingSudoku}>
           Solve
         </Button>
         <Button type="button" onClick={handleGenerateClick}>
