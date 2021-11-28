@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import { deepCopyArray, random, shuffle } from './util';
+import { deepCopy, random, shuffle } from './util';
 
 export function generateEmptySudokuBoard(): number[][] {
   return Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
@@ -164,7 +164,7 @@ export function solveSudoku(
   fillCellsSequentially = true,
   steps?: number[][][]
 ): boolean {
-  if (steps) steps.push(deepCopyArray(sudoku) as number[][]);
+  if (steps) steps.push(deepCopy(sudoku) as number[][]);
 
   const emptyCell = findNextEmptyCell(sudoku);
   if (!emptyCell) {

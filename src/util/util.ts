@@ -1,3 +1,5 @@
+import { Indexable } from '../typings/Indexable';
+
 /**
  * Clamps a value between an upper and lower bound
  * @param value The value to be clamped, if necessary
@@ -13,16 +15,26 @@ export function clamp(value: number, min: number, max: number): number {
 }
 
 /**
- * Returns the deep copy of an array
- * @param array The array to be deep copied
+ * Returns the deep copy of any object
+ * @param value The object to be deep copied
  */
-export function deepCopyArray(array: unknown[]): unknown {
-  return array.map((el) => {
-    if (Array.isArray(el)) {
-      return deepCopyArray(el);
+export function deepCopy(value: unknown): unknown {
+  if (typeof value !== 'object' || value === null) {
+    return value;
+  }
+
+  const copiedObject: Indexable = Array.isArray(value) ? [] : {};
+  const objectValue = value as Indexable;
+
+  for (const key in objectValue) {
+    if (Object.prototype.hasOwnProperty.call(objectValue, key)) {
+      const element = objectValue[key];
+
+      copiedObject[key] = deepCopy(element);
     }
-    return el;
-  });
+  }
+
+  return copiedObject;
 }
 
 /**
@@ -55,7 +67,7 @@ export function random(min: number, max: number): number {
  * @param arr The array to be shuffled
  */
 export function shuffle<T>(arr: T[]): T[] {
-  const arrCopy = deepCopyArray(arr) as T[];
+  const arrCopy = deepCopy(arr) as T[];
 
   for (let i = arrCopy.length - 1; i > 0; i--) {
     const j = random(0, i);

@@ -5,7 +5,7 @@ import {
   generateSolvableSudokuBoard,
   solveSudokuSteps,
 } from '../util/sudoku';
-import { deepCopyArray, sleep } from '../util/util';
+import { deepCopy, sleep } from '../util/util';
 import SudokuBoard from './SudokuBoard';
 
 const Wrapper = styled.div`
@@ -96,7 +96,7 @@ function SudokuSolver(): JSX.Element {
   }, [solvingSpeed, solvingSteps, isSolvingSudoku]);
 
   const setSudokuCell = (value: number, row: number, col: number) => {
-    const valuesCopy = deepCopyArray(sudokuBoard) as number[][];
+    const valuesCopy = deepCopy(sudokuBoard) as number[][];
 
     valuesCopy[row][col] = value;
 
@@ -115,7 +115,7 @@ function SudokuSolver(): JSX.Element {
 
   const handleSolveClick = () => {
     setIsSolvingSudoku(true);
-    const steps = solveSudokuSteps(deepCopyArray(sudokuBoard) as number[][]);
+    const steps = solveSudokuSteps(deepCopy(sudokuBoard) as number[][]);
     if (steps) {
       setSolvingSteps(steps);
     }
