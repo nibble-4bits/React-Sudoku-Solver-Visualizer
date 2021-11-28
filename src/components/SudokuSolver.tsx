@@ -11,8 +11,15 @@ import SudokuBoard from './SudokuBoard';
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-rows: 10fr 4rem 4rem;
+  grid-template-rows: auto 10fr 4rem 4rem;
   gap: 2rem;
+`;
+
+const UnsolvableNotice = styled.p`
+  margin: 0;
+  font-size: 3rem;
+  text-align: center;
+  color: #f00;
 `;
 
 const SolvingSpeedWrapper = styled.div`
@@ -62,6 +69,7 @@ function SudokuSolver(): JSX.Element {
   // This state variable holds a representation of the sudoku board as an array of 9x9 cells
   const [sudokuBoard, setSudokuBoard] = useState(generateEmptySudokuBoard());
   const [solvingSteps, setSolvingSteps] = useState<Board[]>([]);
+  const [isUnsolvable, setIsUnsolvable] = useState(false);
 
   const [solvingSpeed, setSolvingSpeed] = useState('1');
   const [isSolvingSudoku, setIsSolvingSudoku] = useState(false);
@@ -111,6 +119,7 @@ function SudokuSolver(): JSX.Element {
 
   const handleClearClick = () => {
     setIsSolvingSudoku(false);
+    setIsUnsolvable(false);
     setSudokuBoard(generateEmptySudokuBoard());
     currentStepIdx.current = 0;
   };
@@ -120,18 +129,22 @@ function SudokuSolver(): JSX.Element {
     const steps = solveSudokuSteps(deepCopy(sudokuBoard) as Board);
     if (steps) {
       setSolvingSteps(steps);
+    } else {
+      setIsUnsolvable(true);
     }
     currentStepIdx.current = 0;
   };
 
   const handleGenerateClick = () => {
     setIsSolvingSudoku(false);
+    setIsUnsolvable(false);
     setSudokuBoard(generateSolvableSudokuBoard());
     currentStepIdx.current = 0;
   };
 
   return (
     <Wrapper>
+      <UnsolvableNotice>{isUnsolvable && 'Unsolvable board'}</UnsolvableNotice>
       <SudokuBoard
         board={sudokuBoard}
         setBoardCell={setSudokuCell}
