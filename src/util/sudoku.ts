@@ -1,12 +1,15 @@
 import { createRef } from 'react';
+import { Board } from '../typings/Board';
 import { deepCopy, random, shuffle } from './util';
 
-export function generateEmptySudokuBoard(): number[][] {
-  return Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
+export function generateEmptySudokuBoard(): Board {
+  return Array.from({ length: 9 }, () =>
+    Array.from({ length: 9 }, () => ({ value: 0, isGiven: false }))
+  );
 }
 
-export function generateSolvableSudokuBoard(): number[][] {
-  const initialSudoku = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
+export function generateSolvableSudokuBoard(): Board {
+  const initialSudoku = generateEmptySudokuBoard();
   const cellPositions = [];
 
   solveSudoku(initialSudoku, false);
@@ -23,7 +26,13 @@ export function generateSolvableSudokuBoard(): number[][] {
 
   for (let i = 0; i < shuffledCellPositions.length; i++) {
     const [row, col] = shuffledCellPositions[i];
-    initialSudoku[row][col] = 0;
+    initialSudoku[row][col].value = 0;
+  }
+
+  for (let i = 0; i < initialSudoku.length; i++) {
+    for (let j = 0; j < initialSudoku[i].length; j++) {
+      initialSudoku[i][j].isGiven = initialSudoku[i][j].value > 0;
+    }
   }
 
   return initialSudoku;
@@ -89,12 +98,7 @@ export function isCellInBox(
   return false;
 }
 
-export function isValidValue(
-  testValue: number,
-  row: number,
-  col: number,
-  sudoku: number[][]
-): boolean {
+export function isValidValue(testValue: number, row: number, col: number, sudoku: Board): boolean {
   return (
     isValidRowValue(testValue, row, sudoku) &&
     isValidColValue(testValue, col, sudoku) &&
@@ -102,10 +106,10 @@ export function isValidValue(
   );
 }
 
-export function isValidRowValue(testValue: number, row: number, sudoku: number[][]): boolean {
+export function isValidRowValue(testValue: number, row: number, sudoku: Board): boolean {
   for (let x = 0; x < sudoku[row].length; x++) {
-    const currValue = sudoku[row][x];
-    if (testValue === currValue) {
+    const currCell = sudoku[row][x];
+    if (testValue === currCell.value) {
       return false;
     }
   }
@@ -113,10 +117,10 @@ export function isValidRowValue(testValue: number, row: number, sudoku: number[]
   return true;
 }
 
-export function isValidColValue(testValue: number, col: number, sudoku: number[][]): boolean {
+export function isValidColValue(testValue: number, col: number, sudoku: Board): boolean {
   for (let y = 0; y < sudoku.length; y++) {
-    const currValue = sudoku[y][col];
-    if (testValue === currValue) {
+    const currCell = sudoku[y][col];
+    if (testValue === currCell.value) {
       return false;
     }
   }
@@ -128,7 +132,7 @@ export function isValidBoxValue(
   testValue: number,
   row: number,
   col: number,
-  sudoku: number[][]
+  sudoku: Board
 ): boolean {
   const rowStart = row - (row % 3);
   const rowEnd = rowStart + 3;
@@ -137,8 +141,8 @@ export function isValidBoxValue(
 
   for (let y = rowStart; y < rowEnd; y++) {
     for (let x = colStart; x < colEnd; x++) {
-      const currValue = sudoku[y][x];
-      if (testValue === currValue) {
+      const currCell = sudoku[y][x];
+      if (testValue === currCell.value) {
         return false;
       }
     }
@@ -147,10 +151,10 @@ export function isValidBoxValue(
   return true;
 }
 
-export function findNextEmptyCell(sudoku: number[][]): [number, number] | null {
+export function findNextEmptyCell(sudoku: Board): [number, number] | null {
   for (let i = 0; i < sudoku.length; i++) {
     for (let j = 0; j < sudoku[i].length; j++) {
-      if (!sudoku[i][j]) {
+      if (!sudoku[i][j].value) {
         return [i, j];
       }
     }
@@ -159,12 +163,8 @@ export function findNextEmptyCell(sudoku: number[][]): [number, number] | null {
   return null;
 }
 
-export function solveSudoku(
-  sudoku: number[][],
-  fillCellsSequentially = true,
-  steps?: number[][][]
-): boolean {
-  if (steps) steps.push(deepCopy(sudoku) as number[][]);
+export function solveSudoku(sudoku: Board, fillCellsSequentially = true, steps?: Board[]): boolean {
+  if (steps) steps.push(deepCopy(sudoku) as Board);
 
   const emptyCell = findNextEmptyCell(sudoku);
   if (!emptyCell) {
@@ -179,21 +179,21 @@ export function solveSudoku(
 
   for (const possibleNum of possibleNums) {
     if (isValidValue(possibleNum, row, col, sudoku)) {
-      sudoku[row][col] = possibleNum;
+      sudoku[row][col].value = possibleNum;
 
       if (solveSudoku(sudoku, fillCellsSequentially, steps)) {
         return true;
       }
 
-      sudoku[row][col] = 0;
+      sudoku[row][col].value = 0;
     }
   }
 
   return false;
 }
 
-export function solveSudokuSteps(sudoku: number[][]): number[][][] | null {
-  const steps: number[][][] = [];
+export function solveSudokuSteps(sudoku: Board): Board[] | null {
+  const steps: Board[] = [];
 
   const solved = solveSudoku(sudoku, true, steps);
 
