@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { Board } from '../typings/Board';
 import {
   generateEmptySudokuBoard,
   generateSolvableSudokuBoard,
@@ -60,7 +61,7 @@ const Button = styled.button`
 function SudokuSolver(): JSX.Element {
   // This state variable holds a representation of the sudoku board as an array of 9x9 cells
   const [sudokuBoard, setSudokuBoard] = useState(generateEmptySudokuBoard());
-  const [solvingSteps, setSolvingSteps] = useState<number[][][]>([]);
+  const [solvingSteps, setSolvingSteps] = useState<Board[]>([]);
 
   const [solvingSpeed, setSolvingSpeed] = useState('1');
   const [isSolvingSudoku, setIsSolvingSudoku] = useState(false);
@@ -96,9 +97,10 @@ function SudokuSolver(): JSX.Element {
   }, [solvingSpeed, solvingSteps, isSolvingSudoku]);
 
   const setSudokuCell = (value: number, row: number, col: number) => {
-    const valuesCopy = deepCopy(sudokuBoard) as number[][];
+    const valuesCopy = deepCopy(sudokuBoard) as Board;
 
-    valuesCopy[row][col] = value;
+    valuesCopy[row][col].value = value;
+    valuesCopy[row][col].isGiven = !!value;
 
     setSudokuBoard(valuesCopy);
   };
@@ -115,7 +117,7 @@ function SudokuSolver(): JSX.Element {
 
   const handleSolveClick = () => {
     setIsSolvingSudoku(true);
-    const steps = solveSudokuSteps(deepCopy(sudokuBoard) as number[][]);
+    const steps = solveSudokuSteps(deepCopy(sudokuBoard) as Board);
     if (steps) {
       setSolvingSteps(steps);
     }

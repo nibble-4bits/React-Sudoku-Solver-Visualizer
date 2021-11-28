@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 
 interface InputProps {
+  isGiven: boolean;
   row: number;
   col: number;
   highlight: boolean;
@@ -13,7 +14,9 @@ const Input = styled.input<InputProps>`
   border: 1px solid #000;
   border-left: ${(props) => props.col > 0 && props.col % 3 === 0 && '3px solid #000'};
   border-top: ${(props) => props.row > 0 && props.row % 3 === 0 && '3px solid #000'};
+  color: ${(props) => (props.isGiven ? '#000' : '#f00')};
   background-color: ${(props) => props.highlight && '#ddd'};
+  caret-color: #000;
   outline: none;
   font-size: 4rem;
   text-align: center;
@@ -21,7 +24,6 @@ const Input = styled.input<InputProps>`
 
   &:disabled {
     background-color: #fff;
-    color: #000;
   }
 
   // Hide increment/decrement arrows
@@ -37,6 +39,7 @@ interface SudokuCellProps {
   row: number;
   col: number;
   value: number;
+  isGiven: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: React.Dispatch<React.SetStateAction<number[]>>;
   isHighlighted: boolean;
@@ -45,7 +48,7 @@ interface SudokuCellProps {
 }
 
 function SudokuCell(props: SudokuCellProps, ref: React.ForwardedRef<HTMLInputElement>) {
-  const { row, col, value, onChange, onFocus, isHighlighted, disabled, onKeyDown } = props;
+  const { row, col, value, isGiven, onChange, onFocus, isHighlighted, disabled, onKeyDown } = props;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // First, call props onKeyDown event handler, if defined
@@ -90,6 +93,7 @@ function SudokuCell(props: SudokuCellProps, ref: React.ForwardedRef<HTMLInputEle
       onFocus={handleFocus}
       onBlur={handleBlur}
       value={value || ''}
+      isGiven={isGiven}
       row={row}
       col={col}
       disabled={disabled}

@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
+import { Board } from '../typings/Board';
 import {
   generateSudokuCellRefs,
   isCellInBox,
@@ -21,7 +22,7 @@ const Wrapper = styled.div`
 `;
 
 interface SudokuBoardProps {
-  board: number[][];
+  board: Board;
   setBoardCell: (value: number, row: number, col: number) => void;
   disableUserInput?: boolean;
 }
@@ -73,14 +74,15 @@ function SudokuBoard(props: SudokuBoardProps): JSX.Element {
   return (
     <Wrapper>
       {board.map((boardRow, i) => {
-        return boardRow.map((cellValue, j) => {
+        return boardRow.map((cell, j) => {
           return (
             <SudokuCell
               ref={cellRefs.current[i][j]}
               key={i + j}
               row={i}
               col={j}
-              value={cellValue}
+              value={cell.value}
+              isGiven={cell.isGiven}
               onChange={(e) => {
                 handleChange(e, i, j);
               }}
