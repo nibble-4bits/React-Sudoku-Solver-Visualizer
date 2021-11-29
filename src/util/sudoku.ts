@@ -2,12 +2,18 @@ import { createRef } from 'react';
 import { Board } from '../typings/Board';
 import { deepCopy, random, shuffle } from './util';
 
+/**
+ * Generates and returns an empty sudoku board
+ */
 export function generateEmptySudokuBoard(): Board {
   return Array.from({ length: 9 }, () =>
     Array.from({ length: 9 }, () => ({ value: 0, isGiven: false }))
   );
 }
 
+/**
+ * Generates and returns a solvable sudoku board
+ */
 export function generateSolvableSudokuBoard(): Board {
   const initialSudoku = generateEmptySudokuBoard();
   const cellPositions = [];
@@ -38,6 +44,9 @@ export function generateSolvableSudokuBoard(): Board {
   return initialSudoku;
 }
 
+/**
+ * Generates a 9-by-9 array of refs
+ */
 export function generateSudokuCellRefs<T>(): React.RefObject<T>[][] {
   return Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => createRef()));
 }
@@ -46,7 +55,6 @@ export function generateSudokuCellRefs<T>(): React.RefObject<T>[][] {
  * Checks whether a cell (given its row) is part of a certain row in the sudoku board
  * @param referenceRow The row to test against
  * @param testRow The row of the cell to test if it belongs to the `referenceRow`
- * @returns boolean
  */
 export function isCellInRow(referenceRow: number, testRow: number): boolean {
   if (referenceRow < 0) return false;
@@ -58,7 +66,6 @@ export function isCellInRow(referenceRow: number, testRow: number): boolean {
  * Checks whether a cell (given its column) is part of a certain column in the sudoku board
  * @param referenceCol The column to test against
  * @param testCol The column of the cell to test if it belongs to the `referenceRow`
- * @returns boolean
  */
 export function isCellInCol(referenceCol: number, testCol: number): boolean {
   if (referenceCol < 0) return false;
@@ -72,7 +79,6 @@ export function isCellInCol(referenceCol: number, testCol: number): boolean {
  * @param referenceCol The column to test against
  * @param testRow The row of the cell to test if it belongs to the `referenceRow`
  * @param testCol The column of the cell to test if it belongs to the `referenceCol`
- * @returns boolean
  */
 export function isCellInBox(
   referenceRow: number,
@@ -98,6 +104,13 @@ export function isCellInBox(
   return false;
 }
 
+/**
+ * Checks whether a particular value can be validly placed in a certain cell of a sudoku board
+ * @param testValue The value to be checked
+ * @param row The row index of the cell where `testValue` is tried to be placed
+ * @param col The column index of the cell where `testValue` is tried to be placed
+ * @param sudoku The sudoku board
+ */
 export function isValidValue(testValue: number, row: number, col: number, sudoku: Board): boolean {
   return (
     isValidRowValue(testValue, row, sudoku) &&
@@ -106,6 +119,12 @@ export function isValidValue(testValue: number, row: number, col: number, sudoku
   );
 }
 
+/**
+ * Checks whether a particular value can be validly placed in a certain row of a sudoku board
+ * @param testValue The value to be checked
+ * @param row The row index of the cell where `testValue` is tried to be placed
+ * @param sudoku The sudoku board
+ */
 export function isValidRowValue(testValue: number, row: number, sudoku: Board): boolean {
   for (let x = 0; x < sudoku[row].length; x++) {
     const currCell = sudoku[row][x];
@@ -117,6 +136,12 @@ export function isValidRowValue(testValue: number, row: number, sudoku: Board): 
   return true;
 }
 
+/**
+ * Checks whether a particular value can be validly placed in a certain column of a sudoku board
+ * @param testValue The value to be checked
+ * @param col The column index of the cell where `testValue` is tried to be placed
+ * @param sudoku The sudoku board
+ */
 export function isValidColValue(testValue: number, col: number, sudoku: Board): boolean {
   for (let y = 0; y < sudoku.length; y++) {
     const currCell = sudoku[y][col];
@@ -128,6 +153,13 @@ export function isValidColValue(testValue: number, col: number, sudoku: Board): 
   return true;
 }
 
+/**
+ * Checks whether a particular value can be validly placed in a certain box of a sudoku board
+ * @param testValue The value to be checked
+ * @param row The row index of the cell where `testValue` is tried to be placed
+ * @param col The column index of the cell where `testValue` is tried to be placed
+ * @param sudoku The sudoku board
+ */
 export function isValidBoxValue(
   testValue: number,
   row: number,
@@ -151,6 +183,10 @@ export function isValidBoxValue(
   return true;
 }
 
+/**
+ * Finds the first cell that is empty in a sudoku board
+ * @param sudoku The sudoku board to check for an empty cell
+ */
 export function findNextEmptyCell(sudoku: Board): [number, number] | null {
   for (let i = 0; i < sudoku.length; i++) {
     for (let j = 0; j < sudoku[i].length; j++) {
