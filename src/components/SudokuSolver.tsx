@@ -104,6 +104,13 @@ function SudokuSolver(): JSX.Element {
     };
   }, [solvingSpeed, solvingSteps, isSolvingSudoku]);
 
+  const resetState = () => {
+    setIsSolvingSudoku(false);
+    setSolvingSteps([]);
+    setIsUnsolvable(false);
+    currentStepIdx.current = 0;
+  };
+
   const setSudokuCell = (value: number, row: number, col: number) => {
     const valuesCopy = deepCopy(sudokuBoard) as Board;
 
@@ -118,10 +125,8 @@ function SudokuSolver(): JSX.Element {
   };
 
   const handleClearClick = () => {
-    setIsSolvingSudoku(false);
-    setIsUnsolvable(false);
+    resetState();
     setSudokuBoard(generateEmptySudokuBoard());
-    currentStepIdx.current = 0;
   };
 
   const handleSolveClick = () => {
@@ -136,10 +141,8 @@ function SudokuSolver(): JSX.Element {
   };
 
   const handleGenerateClick = () => {
-    setIsSolvingSudoku(false);
-    setIsUnsolvable(false);
+    resetState();
     setSudokuBoard(generateSolvableSudokuBoard());
-    currentStepIdx.current = 0;
   };
 
   return (
